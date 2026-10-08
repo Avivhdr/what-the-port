@@ -2,7 +2,7 @@
 
 import { type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styles from './landing.module.css'
-import { AMBER, BackIcon, Chevron, ClaudeIcon, CodexIcon, Colon, DotGrid, OpenIcon, VercelIcon } from './icons'
+import { AMBER, BackIcon, Chevron, ClaudeIcon, CodexIcon, Colon, DotGrid, GrokIcon, OpenIcon, VercelIcon } from './icons'
 import { type AppLanguageCode, type Localizer, localizer } from './languages'
 import { GET_IT, TERMINAL } from './sections'
 import {
@@ -184,6 +184,7 @@ function Header({ title, onBack, backLabel }: { title: string; onBack?: () => vo
 function AgentIcon({ agent }: { agent?: Agent }) {
   if (agent === 'claude') return <ClaudeIcon />
   if (agent === 'codex') return <CodexIcon />
+  if (agent === 'grok') return <GrokIcon />
   return null
 }
 

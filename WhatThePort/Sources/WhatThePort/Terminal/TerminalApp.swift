@@ -803,6 +803,7 @@ final class TerminalApp {
         switch kind {
         case .claudeCode: return "✳"
         case .codex: return ">_"
+        case .grok: return "◎"
         }
     }
 

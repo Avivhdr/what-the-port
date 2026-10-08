@@ -146,6 +146,7 @@
 "Not found" = "Not found";
 "Not found in ~/.claude" = "Not found in ~/.claude";
 "Not found in ~/.codex" = "Not found in ~/.codex";
+"Not found in ~/.grok" = "Not found in ~/.grok";
 "Not installed" = "Not installed";
 "Nothing listening" = "Nothing listening";
 "Notifications" = "Notifications";

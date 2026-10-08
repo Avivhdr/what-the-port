@@ -193,6 +193,11 @@ struct AgentGlyph: View {
                 prompt.addLine(to: CGPoint(x: 3.5 * s, y: 7.4 * s))
                 prompt.move(to: CGPoint(x: 6.2 * s, y: 7.6 * s)); prompt.addLine(to: CGPoint(x: 8.5 * s, y: 7.6 * s))
                 context.stroke(prompt, with: .color(color), style: StrokeStyle(lineWidth: 1.2 * s, lineCap: .round, lineJoin: .round))
+            case .grok:
+                let ring = Path(ellipseIn: CGRect(x: 1.4 * s, y: 1.4 * s, width: 9.2 * s, height: 9.2 * s))
+                context.stroke(ring, with: .color(color), lineWidth: 1.2 * s)
+                let dot = Path(ellipseIn: CGRect(x: 4.7 * s, y: 4.7 * s, width: 2.6 * s, height: 2.6 * s))
+                context.fill(dot, with: .color(color))
             }
         }
         .frame(width: size, height: size)

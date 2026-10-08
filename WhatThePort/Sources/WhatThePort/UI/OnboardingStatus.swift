@@ -4,12 +4,13 @@ import SwiftUI
 import UserNotifications
 
 enum OnboardingTool: CaseIterable, Hashable, Sendable {
-    case claude, codex, conductor, pane, github
+    case claude, codex, grok, conductor, pane, github
 
     var name: String {
         switch self {
         case .claude: return "Claude Code"
         case .codex: return "Codex"
+        case .grok: return "Grok"
         case .conductor: return "Conductor"
         case .pane: return "Pane"
         case .github: return "GitHub CLI"
@@ -20,6 +21,7 @@ enum OnboardingTool: CaseIterable, Hashable, Sendable {
         switch self {
         case .claude: return "~/.claude"
         case .codex: return "~/.codex"
+        case .grok: return "~/.grok"
         case .conductor, .pane: return L10n.text("Installed")
         case .github: return "gh"
         }
@@ -57,6 +59,7 @@ struct OnboardingServices {
                 switch tool {
                 case .claude: return ToolDetection.claude
                 case .codex: return ToolDetection.codex
+                case .grok: return ToolDetection.grok
                 case .conductor: return ToolDetection.conductor
                 case .pane: return ToolDetection.pane
                 case .github: return GitHubLookup.isAvailable

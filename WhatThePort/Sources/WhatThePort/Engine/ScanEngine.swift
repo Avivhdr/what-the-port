@@ -5,8 +5,7 @@ struct ScanConfig {
     var maxPort: Int
     var allowlist: Set<String>
     var protected: Set<String> = Set(Preferences.defaultProtected)
-    var linkClaude = true
-    var linkCodex = true
+    var linkedAgents: Set<AgentKind> = Set(AgentKind.allCases)
     var linkConductor = true
     var linkPane = true
     var showBranches = true
@@ -26,9 +25,9 @@ final class ScanEngine: @unchecked Sendable {
         "dotnet", "php", "mix", "beam.smp", "elixir",
     ]
     private static let shells: Set<String> = ["sh", "bash", "zsh", "dash", "fish"]
-    private static let agentNames: Set<String> = ["claude", "codex", "Conductor"]
+    private static let agentNames: Set<String> = ["claude", "codex", "grok", "Conductor"]
     /// Path fragments that identify an agent launched via a runtime like node.
-    private static let agentPathMarkers = ["@anthropic-ai/claude-code", "com.conductor.app", "/codex/"]
+    private static let agentPathMarkers = ["@anthropic-ai/claude-code", "com.conductor.app", "/codex/", "@xai-official/grok"]
 
     private let projects = ProjectResolver()
     private let agents = AgentSessionResolver()
@@ -148,7 +147,7 @@ final class ScanEngine: @unchecked Sendable {
                 project: project,
                 conductorWorkspace: config.linkConductor ? environment["CONDUCTOR_WORKSPACE_NAME"] : nil,
                 paneWorkspace: config.linkPane ? PaneWorkspace(environment: environment) : nil,
-                agent: agents.resolve(environment: environment, cwd: cwd, claude: config.linkClaude, codex: config.linkCodex),
+                agent: agents.resolve(environment: environment, cwd: cwd, enabled: config.linkedAgents),
                 processes: nodes,
                 processStarts: starts,
                 memory: memory,

@@ -6,7 +6,7 @@ import { breadcrumbs } from '@/lib/structured-data'
 
 const title = 'Guides: ports, dev servers and coding agents on macOS'
 const description =
-  'Practical guides to finding what’s running on localhost, fixing “port already in use” and EADDRINUSE, cleaning up dev servers left by Claude Code and Codex, and keeping memory in check on a Mac.'
+  'Practical guides to finding what’s running on localhost, fixing “port already in use” and EADDRINUSE, cleaning up dev servers left by Claude Code, Codex and Grok, and keeping memory in check on a Mac.'
 
 export const metadata: Metadata = {
   title,

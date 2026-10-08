@@ -8,6 +8,7 @@ import {
   SERVERS,
   OTHER_MEMORY,
   SYSTEM_MEMORY,
+  type Agent,
   type Server,
   cpuBars,
   formatMemory,
@@ -26,6 +27,12 @@ import {
 // Quitting drops to a pretend shell that only really knows `wtp`.
 
 const PROMPT = 'visitor@whattheport ~ %'
+
+const AGENTS: Record<Agent, { name: string; glyph: string }> = {
+  claude: { name: 'Claude Code', glyph: '✳' },
+  codex: { name: 'Codex', glyph: '>_' },
+  grok: { name: 'Grok', glyph: '◎' },
+}
 const RED = '#FF6961'
 const SCREEN = { width: 1152, height: 720, menuBar: 30 }
 // Window chrome around the character grid: title bar, body padding and line insets.
@@ -296,6 +303,7 @@ function reply(input: string, ports: string[], language: AppLanguageCode): { lin
       }
     case 'claude':
     case 'codex':
+    case 'grok':
       return { lines: [{ text: `${name}: needs a real terminal. This one is a <div>.` }] }
     case 'vim':
     case 'vi':
@@ -439,7 +447,7 @@ export function TerminalWindow({ visible = true, desktop = false }: { visible?: 
   }
 
   const actionsFor = (server: Server): Action[] => {
-    const agent = server.session ? (server.session.agent === 'claude' ? 'Claude Code' : 'Codex') : null
+    const agent = server.session ? AGENTS[server.session.agent].name : null
     const count = server.processes.length
     const items: Action[] = [{ label: `Open localhost:${server.port}`, key: 'o', run: () => show(`Opened localhost:${server.port}`) }]
     if (agent) items.push({ label: `Resume ${agent} in Terminal`, key: 'a', run: () => show('Resuming in Terminal') })
@@ -879,7 +887,7 @@ export function TerminalWindow({ visible = true, desktop = false }: { visible?: 
       const isSelected = s.port === selected
       const amber = s.status === 'amber'
       const reason = cleaning ? s.cleanUp : undefined
-      const agent = s.context.agent === 'claude' ? '✳ ' : s.context.agent === 'codex' ? '>_ ' : ''
+      const agent = s.context.agent ? `${AGENTS[s.context.agent].glyph} ` : ''
       const on = checked.includes(s.port)
       const click = () => {
         if (isSelected && cleaning) setChecked((c) => (on ? c.filter((p) => p !== s.port) : [...c, s.port]))
@@ -950,7 +958,7 @@ export function TerminalWindow({ visible = true, desktop = false }: { visible?: 
     )
     const primary: ReactNode[] = []
     if (server.session) {
-      const glyph = server.session.agent === 'claude' ? '✳ ' : '>_ '
+      const glyph = `${AGENTS[server.session.agent].glyph} `
       primary.push(
         row(
           'Session',

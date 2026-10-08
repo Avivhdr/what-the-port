@@ -146,6 +146,7 @@
 "Not found" = "לא נמצא";
 "Not found in ~/.claude" = "לא נמצא ב־⁦~/.claude⁩";
 "Not found in ~/.codex" = "לא נמצא ב־⁦~/.codex⁩";
+"Not found in ~/.grok" = "לא נמצא ב־⁦~/.grok⁩";
 "Not installed" = "לא מותקן";
 "Nothing listening" = "אין שרתים מאזינים";
 "Notifications" = "עדכונים";

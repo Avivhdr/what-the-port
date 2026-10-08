@@ -77,6 +77,15 @@ export function ClaudeIcon({ color = stroke(75), size = 12, width = 1.4 }: { col
   )
 }
 
+export function GrokIcon({ color = stroke(75), size = 12, width = 1.2 }: { color?: string; size?: number; width?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 12 12" aria-hidden style={{ flexShrink: 0 }}>
+      <circle cx="6" cy="6" r="4.6" fill="none" stroke={color} strokeWidth={width} />
+      <circle cx="6" cy="6" r="1.3" fill={color} />
+    </svg>
+  )
+}
+
 export function CodexIcon({ color = stroke(75), size = 12, width = 1.2 }: { color?: string; size?: number; width?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 12 12" aria-hidden style={{ flexShrink: 0 }}>

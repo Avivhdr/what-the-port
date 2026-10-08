@@ -11,7 +11,7 @@ struct ScanEngineTests {
         var reads: [pid_t: Int] = [:]
         let epoch = Date(timeIntervalSince1970: 1_700_000_000)
         var config = ScanConfig(minPort: 3000, maxPort: 9999, allowlist: ["node", "Python", "python3"],
-                                linkClaude: false, linkCodex: false, linkConductor: false, showBranches: false)
+                                linkedAgents: [], linkConductor: false, showBranches: false)
         lazy var engine = ScanEngine(inspector: .init(
             usage: { [unowned self] pid in
                 reads[pid, default: 0] += 1

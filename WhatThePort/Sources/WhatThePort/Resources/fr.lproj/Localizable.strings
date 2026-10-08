@@ -146,6 +146,7 @@
 "Not found" = "Introuvable";
 "Not found in ~/.claude" = "Introuvable dans ~/.claude";
 "Not found in ~/.codex" = "Introuvable dans ~/.codex";
+"Not found in ~/.grok" = "Introuvable dans ~/.grok";
 "Not installed" = "Non installé";
 "Nothing listening" = "Aucun serveur à l’écoute";
 "Notifications" = "Notifications";

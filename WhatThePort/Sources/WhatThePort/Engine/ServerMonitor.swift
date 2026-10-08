@@ -80,13 +80,16 @@ final class ServerMonitor: ObservableObject {
     var cleanUpMode: Preferences.CleanUpMode { Preferences.CleanUpMode(rawValue: defaults.string(forKey: Preferences.cleanUpMode) ?? "") ?? .ask }
 
     private var scanConfig: ScanConfig {
-        ScanConfig(minPort: minPort, maxPort: maxPort, allowlist: allowlist,
-                   protected: Set(defaults.stringArray(forKey: Preferences.protectedProcesses) ?? Preferences.defaultProtected),
-                   linkClaude: defaults.bool(forKey: Preferences.linkClaude),
-                   linkCodex: defaults.bool(forKey: Preferences.linkCodex),
-                   linkConductor: defaults.bool(forKey: Preferences.linkConductor),
-                   linkPane: defaults.bool(forKey: Preferences.linkPane),
-                   showBranches: defaults.bool(forKey: Preferences.showBranches))
+        var linkedAgents: Set<AgentKind> = []
+        if defaults.bool(forKey: Preferences.linkClaude) { linkedAgents.insert(.claudeCode) }
+        if defaults.bool(forKey: Preferences.linkCodex) { linkedAgents.insert(.codex) }
+        if defaults.bool(forKey: Preferences.linkGrok) { linkedAgents.insert(.grok) }
+        return ScanConfig(minPort: minPort, maxPort: maxPort, allowlist: allowlist,
+                          protected: Set(defaults.stringArray(forKey: Preferences.protectedProcesses) ?? Preferences.defaultProtected),
+                          linkedAgents: linkedAgents,
+                          linkConductor: defaults.bool(forKey: Preferences.linkConductor),
+                          linkPane: defaults.bool(forKey: Preferences.linkPane),
+                          showBranches: defaults.bool(forKey: Preferences.showBranches))
     }
 
     // MARK: - Scanning

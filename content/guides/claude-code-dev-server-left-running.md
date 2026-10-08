@@ -1,13 +1,13 @@
 ---
 title: Claude Code left a dev server running? Find and clean up agent-started servers
-description: Coding agents like Claude Code, Codex and Cursor start dev servers in the background and leave them running. How to find which agent session started each server, stop the leftovers, and stop agents starting duplicates.
+description: Coding agents like Claude Code, Codex, Grok and Cursor start dev servers in the background and leave them running. How to find which agent session started each server, stop the leftovers, and stop agents starting duplicates.
 published: 2026-09-25
-updated: 2026-09-29
+updated: 2026-10-03
 order: 4
-keywords: claude code dev server still running, claude code background process, claude code port already in use, codex dev server, cursor agent starts new dev server, zombie node processes, orphaned dev servers
+keywords: claude code dev server still running, claude code background process, claude code port already in use, codex dev server, grok dev server, cursor agent starts new dev server, zombie node processes, orphaned dev servers
 ---
 
-Coding agents are good at starting dev servers. They’re less good at stopping them. Ask Claude Code, Codex or Cursor to “check it in the browser” and it will run `npm run dev` in a background shell. The session ends, you close the window, and the server keeps running. Do that across a few projects and a few days and you have a handful of `node` processes holding ports and gigabytes of memory, none of them attached to a terminal you can find.
+Coding agents are good at starting dev servers. They’re less good at stopping them. Ask Claude Code, Codex, Grok or Cursor to “check it in the browser” and it will run `npm run dev` in a background shell. The session ends, you close the window, and the server keeps running. Do that across a few projects and a few days and you have a handful of `node` processes holding ports and gigabytes of memory, none of them attached to a terminal you can find.
 
 The other symptom is the reverse: the agent doesn’t notice a server is already running, starts another, and gets `localhost:3001`. Then `3002`. You keep typing new port numbers into the browser.
 
@@ -22,7 +22,7 @@ lsof -nP -iTCP -sTCP:LISTEN | grep -iE '^(node|bun|deno|python)'
 To tell which ones came from an agent, look at their environment. Agents pass variables to the commands they run, and child processes inherit them. On macOS, `ps -E` shows a process’s environment (for processes you own):
 
 ```bash
-ps -E -ww -o command= -p <PID> | tr ' ' '\n' | grep -E '^(CLAUDE|CONDUCTOR|CODEX|PANE)'
+ps -E -ww -o command= -p <PID> | tr ' ' '\n' | grep -E '^(CLAUDE|CONDUCTOR|CODEX|PANE|GROK)'
 ```
 
 Some servers rename themselves once they start (Next.js shows up as `next-server`), which hides their environment from `ps`. If nothing prints, try the parent process instead: `ps -o ppid= -p <PID>` gives you its PID.
@@ -32,6 +32,7 @@ What to look for:
 | Started by | Variables in the server’s environment |
 | --- | --- |
 | Claude Code | `CLAUDECODE=1`, `CLAUDE_CODE_SESSION_ID` |
+| Grok | `GROK_SESSION_ID`. If the variable is gone, match the server’s folder to a session in `~/.grok/sessions` |
 | Conductor | `CONDUCTOR_WORKSPACE_NAME`, `CONDUCTOR_PORT` |
 | Pane | `PANE_SESSION_ID`, `PANE_PANEL_ID`, `PANE_WORKSPACE_PATH` |
 | Codex | Match the server’s folder to a session in `~/.codex/sessions` |
@@ -41,6 +42,7 @@ With the session ID you can go back to the conversation that started the server:
 ```bash
 claude --resume <session-id>
 codex resume <session-id>
+grok --resume <session-id>
 ```
 
 That’s often the fastest way to decide whether a server still matters: open the session, see what the agent was doing, and either carry on or stop it.
@@ -80,7 +82,7 @@ Two more things help:
 
 ## With WhatThePort
 
-[WhatThePort](/) is a free menu bar app built for this. It links every server to the Claude Code, Codex, Conductor or Pane session that started it, using the same environment variables and session files described above. Click a server to see its session, branch, folder and command, then resume the conversation or stop the server and its own process tree.
+[WhatThePort](/) is a free menu bar app built for this. It links every server to the Claude Code, Codex, Grok, Conductor or Pane session that started it, using the same environment variables and session files described above. Click a server to see its session, branch, folder and command, then resume the conversation or stop the server and its own process tree.
 
 **Clean up** preselects servers from deleted worktrees and servers that have been idle for hours, so the leftovers from last week’s agent sessions go in one click. You can set it to ask first or to run automatically; servers that are leaking memory are never stopped automatically, and Postgres and Redis are protected by default.
 

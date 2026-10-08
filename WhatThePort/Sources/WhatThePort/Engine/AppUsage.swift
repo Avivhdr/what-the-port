@@ -101,6 +101,7 @@ final class AppUsageScanner: @unchecked Sendable {
         if appBundle(containing: path) != nil, !lowered.contains("claude-code") { return nil }
         if comm == "claude" || lowered.contains("@anthropic-ai/claude-code") || lowered.hasSuffix("/claude") { return .claudeCode }
         if comm == "codex" || lowered.contains("/codex/") || lowered.hasSuffix("/codex") { return .codex }
+        if comm == "grok" || lowered.contains("@xai-official/grok") || lowered.hasSuffix("/grok") { return .grok }
         return nil
     }
 

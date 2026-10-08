@@ -146,6 +146,7 @@
 "Not found" = "見つかりません";
 "Not found in ~/.claude" = "~/.claude に見つかりません";
 "Not found in ~/.codex" = "~/.codex に見つかりません";
+"Not found in ~/.grok" = "~/.grok に見つかりません";
 "Not installed" = "未インストール";
 "Nothing listening" = "待ち受け中のサーバーはありません";
 "Notifications" = "通知";

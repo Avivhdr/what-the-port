@@ -146,6 +146,7 @@
 "Not found" = "Не знайдено";
 "Not found in ~/.claude" = "Не знайдено в ~/.claude";
 "Not found in ~/.codex" = "Не знайдено в ~/.codex";
+"Not found in ~/.grok" = "Не знайдено в ~/.grok";
 "Not installed" = "Не встановлено";
 "Nothing listening" = "Жоден сервер не слухає";
 "Notifications" = "Сповіщення";
