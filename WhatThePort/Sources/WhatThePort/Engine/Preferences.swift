@@ -35,6 +35,7 @@ enum Preferences {
     // Integrations
     static let linkClaude = "integrations.claude"
     static let linkCodex = "integrations.codex"
+    static let linkGrok = "integrations.grok"
     static let linkConductor = "integrations.conductor"
     static let linkPane = "integrations.pane"
     static let showBranches = "integrations.branches"
@@ -81,6 +82,7 @@ enum Preferences {
             forceQuitSeconds: 3.0,
             linkClaude: true,
             linkCodex: true,
+            linkGrok: true,
             linkConductor: true,
             linkPane: true,
             showBranches: true,

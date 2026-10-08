@@ -4,7 +4,7 @@ import type { Localizer } from './languages'
 // Sample data for the marketing demo. Keep presentation aligned with the native SwiftUI views.
 // Memory values use binary MB, matching Theme.swift / Format.
 
-export type Agent = 'claude' | 'codex'
+export type Agent = 'claude' | 'codex' | 'grok'
 export type CleanUpReason = 'deleted' | 'idle' | 'leaking'
 
 export type Server = {
@@ -65,8 +65,9 @@ export const SERVERS: Server[] = [
     cpu: 2,
     cpuNote: 'quiet',
     uptime: 'up 1d 4h',
-    context: { text: 'tomjohn.design · up 1d' },
+    context: { agent: 'grok', text: 'tomjohn.design · up 1d' },
     lines: (l) => ({ context: `tomjohn.design · ${l.format('up %@', l.duration(1680, true))}`, running: l.duration(1680) }),
+    session: { agent: 'grok', title: 'Homepage type scale', id: 'b4e91a20' },
     chart: 'steady',
     spark: 'M0 10 L4 10.5 L8 9.5 L12 10 L16 9 L20 10 L24 9.5 L28 10 L32 9 L36 9.5 L40 9 L44 9.5',
     processes: [

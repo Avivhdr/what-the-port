@@ -146,6 +146,7 @@
 "Not found" = "未找到";
 "Not found in ~/.claude" = "未在 ~/.claude 中找到";
 "Not found in ~/.codex" = "未在 ~/.codex 中找到";
+"Not found in ~/.grok" = "未在 ~/.grok 中找到";
 "Not installed" = "未安装";
 "Nothing listening" = "没有监听中的服务器";
 "Notifications" = "通知";

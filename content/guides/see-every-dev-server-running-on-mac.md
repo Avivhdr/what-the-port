@@ -2,7 +2,7 @@
 title: How to see every dev server running on your Mac
 description: List every localhost server and listening port on macOS from the terminal, work out which project each one belongs to, and keep them in view from the menu bar.
 published: 2026-09-25
-updated: 2026-09-29
+updated: 2026-10-03
 order: 3
 keywords: what is running on localhost mac, list listening ports mac, see all localhost servers mac, lsof listening ports, which process is using which port macos, localhost manager mac
 ---
@@ -69,7 +69,7 @@ The commands above answer the question once. If you run more than a couple of se
 - the project name from `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod` or `Gemfile`, and the framework
 - the git branch, and whether its worktree has been deleted
 - uptime, memory and CPU for each server’s own process tree, with ten minutes of history
-- the Claude Code, Codex, Conductor or Pane session that started it, if any
+- the Claude Code, Codex, Grok, Conductor or Pane session that started it, if any
 
 Press ⌥⌘P to open it, click a server to open it in the browser, or stop it. Prefer the terminal? `wtp` shows the same list there, and `wtp list --json` prints it for scripts.
 

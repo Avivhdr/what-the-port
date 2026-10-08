@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     'localhost manager',
     'Claude Code',
     'Codex',
+    'Grok',
     'Conductor',
     'Pane',
     'git worktrees',

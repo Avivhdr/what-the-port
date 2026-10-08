@@ -343,6 +343,7 @@ private struct PortsPane: View {
 private struct IntegrationsPane: View {
     @AppStorage(Preferences.linkClaude) private var claude = true
     @AppStorage(Preferences.linkCodex) private var codex = true
+    @AppStorage(Preferences.linkGrok) private var grok = true
     @AppStorage(Preferences.linkConductor) private var conductor = true
     @AppStorage(Preferences.linkPane) private var pane = true
     @AppStorage(Preferences.showBranches) private var branches = true
@@ -357,6 +358,9 @@ private struct IntegrationsPane: View {
                 }
                 Toggle(isOn: $codex) {
                     SettingLabel("Codex", caption: ToolDetection.codex ? L10n.text("Link servers to Codex threads") : L10n.text("Not found in ~/.codex"))
+                }
+                Toggle(isOn: $grok) {
+                    SettingLabel("Grok", caption: ToolDetection.grok ? L10n.text("Link servers to the session that started them") : L10n.text("Not found in ~/.grok"))
                 }
                 Toggle(isOn: $conductor) {
                     SettingLabel("Conductor", caption: ToolDetection.conductor ? L10n.text("Show workspace names") : L10n.text("Not installed"))
@@ -396,6 +400,7 @@ enum ToolDetection {
     private static let home = FileManager.default.homeDirectoryForCurrentUser.path
     static var claude: Bool { FileManager.default.fileExists(atPath: home + "/.claude/projects") }
     static var codex: Bool { FileManager.default.fileExists(atPath: home + "/.codex/sessions") }
+    static var grok: Bool { FileManager.default.fileExists(atPath: home + "/.grok/sessions") }
     static var conductor: Bool { NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.conductor.app") != nil
         || FileManager.default.fileExists(atPath: home + "/Library/Application Support/com.conductor.app") }
     static var pane: Bool { NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.dcouple.pane") != nil }
