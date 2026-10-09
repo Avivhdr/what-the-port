@@ -71,10 +71,16 @@ enum SnapshotRenderer {
     @ViewBuilder private static func snapshotPage(monitor: ServerMonitor, route: PopoverRoute, cleaning: Bool) -> some View {
         switch route {
         case .servers:
-            ServersView(monitor: monitor, startCleaning: cleaning, openServer: { _ in }, openSettings: {})
+            ServersView(monitor: monitor, commands: CommandRunner(defaults: UserDefaults(suiteName: "whattheport.snapshot.commands") ?? .standard),
+                        startCleaning: cleaning, openServer: { _ in }, openSettings: {}, openCommands: {})
+        case .commands:
+            CommandsView(runner: CommandRunner(defaults: UserDefaults(suiteName: "whattheport.snapshot.commands") ?? .standard),
+                         monitor: monitor, back: {}, openServer: { _ in })
         case .detail(let port):
             if let server = monitor.server(port: port) {
-                ServerDetailView(server: server, monitor: monitor, back: {})
+                ServerDetailView(server: server, monitor: monitor,
+                                 commands: CommandRunner(defaults: UserDefaults(suiteName: "whattheport.snapshot.commands") ?? .standard),
+                                 back: {})
             }
         }
     }

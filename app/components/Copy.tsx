@@ -79,7 +79,7 @@ export function SectionCopy({ index, stars }: { index: number; stars: number | n
           <h1 className={styles.headline}>Every dev server on your Mac, in the menu bar.</h1>
           <p className={styles.body}>
             What it is, what branch it’s on, which agent started it, and what it’s costing you. Stop the ones you forgot
-            about in one click.
+            about in one click, or run a saved command from the same window.
           </p>
           <Cta stars={stars} location="hero" />
         </div>

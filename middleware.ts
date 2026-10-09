@@ -13,6 +13,7 @@ const FEATURES = new Set([
   'open-editor',
   'stop',
   'restart',
+  'run-command',
   'clean-up',
   'auto-clean-up',
   'memory-alert',

@@ -220,18 +220,24 @@ final class ScanEngine: @unchecked Sendable {
     }
 
     static func isEmbeddedAppExecutable(_ path: String) -> Bool {
-        // Accept only the standard framework wrapper, not a Python framework
-        // nested inside another desktop app, nor arbitrary Python.app bundles.
-        let marker = "/Python.framework/Versions/"
-        if let range = path.range(of: marker),
-           !path[..<range.lowerBound].contains(".app/Contents/") {
-            let suffix = path[range.upperBound...].split(separator: "/")
-            if suffix.count == 6, !suffix[0].isEmpty,
-               suffix.dropFirst().joined(separator: "/") == "Resources/Python.app/Contents/MacOS/Python" {
-                return false
-            }
-        }
+        // Homebrew, python.org, and Xcode's python3 all report Python.app.
+        // A copy nested in another desktop app stays hidden.
+        if isDeveloperPythonWrapper(path) { return false }
         return path.contains(".app/Contents/")
+    }
+
+    /// `…/Python.framework/Versions/<n>/Resources/Python.app/Contents/MacOS/Python`,
+    /// or the same path under `Python3.framework` (the interpreter inside Xcode).
+    private static func isDeveloperPythonWrapper(_ path: String) -> Bool {
+        let markers = ["/Python.framework/Versions/", "/Python3.framework/Versions/"]
+        guard let marker = markers.first(where: { path.contains($0) }),
+              let range = path.range(of: marker) else { return false }
+        let suffix = path[range.upperBound...].split(separator: "/")
+        guard suffix.count == 6, !suffix[0].isEmpty,
+              suffix.dropFirst().joined(separator: "/") == "Resources/Python.app/Contents/MacOS/Python" else { return false }
+        let prefix = String(path[..<range.lowerBound])
+        if prefix.contains(".app/Contents/"), !prefix.contains("/Contents/Developer/") { return false }
+        return true
     }
 
     /// Merges environments from the listener up through its launcher. Tools that

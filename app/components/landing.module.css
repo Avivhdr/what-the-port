@@ -1205,6 +1205,55 @@
   padding: 12px;
 }
 
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.commandHelp {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.commandRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.commandMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.commandName {
+  font-weight: 500;
+}
+
+.commandScript {
+  overflow: hidden;
+  font-size: 11px;
+  color: #ebebf566;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.iconButton {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: #ffffff14;
+  color: #f5f5f7;
+  font: inherit;
+  font-size: 11px;
+}
+
 .chip {
   cursor: default;
   transition: background-color 0.12s ease;
@@ -1487,12 +1536,27 @@
 }
 
 .processRow {
-  height: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 8px 0;
+  font-size: 12px;
+}
+
+.processRow + .processRow {
+  border-top: 0.5px solid #ffffff1f;
+}
+
+.processCommand {
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.processMeta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 12px;
+  gap: 8px;
 }
 
 .popover .primaryAction {
@@ -1873,7 +1937,7 @@
   background: #f5f5f7bf;
 }
 
-.processRow > span:last-child { width: 70px; flex-shrink: 0; text-align: right; }
+.processMeta > span:last-child { width: 70px; flex-shrink: 0; text-align: right; }
 
 .emptyState { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 28px 0; }
 

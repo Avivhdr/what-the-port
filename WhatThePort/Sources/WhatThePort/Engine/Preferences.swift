@@ -42,6 +42,10 @@ enum Preferences {
     static let vercelPreviews = "integrations.vercelPreviews"
     static let githubPullRequests = "integrations.githubPullRequests"
 
+    /// Saved shell commands and the processes currently running them.
+    static let savedCommands = "commands.saved"
+    static let runningCommands = "commands.running"
+
     enum IconStyle: String, CaseIterable {
         case colon, colonCount, count
         var label: String {

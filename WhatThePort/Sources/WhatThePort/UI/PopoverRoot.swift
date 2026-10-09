@@ -3,10 +3,12 @@ import SwiftUI
 enum PopoverRoute: Equatable {
     case servers
     case detail(port: Int)
+    case commands
 }
 
 struct PopoverRoot: View {
     @ObservedObject var monitor: ServerMonitor
+    @ObservedObject var commands: CommandRunner
     @State var route: PopoverRoute = .servers
     /// Snapshot mode uses this to render the Clean up state.
     var startCleaning = false
@@ -18,13 +20,19 @@ struct PopoverRoot: View {
             switch route {
             case .servers:
                 ServersView(monitor: monitor,
+                            commands: commands,
                             startCleaning: startCleaning,
                             openServer: { server in navigate(to: .detail(port: server.port)) },
-                            openSettings: openSettings)
+                            openSettings: openSettings,
+                            openCommands: { navigate(to: .commands) })
                     .transition(.move(edge: .leading).combined(with: .opacity))
+            case .commands:
+                CommandsView(runner: commands, monitor: monitor, back: { navigate(to: .servers) },
+                             openServer: { server in navigate(to: .detail(port: server.port)) })
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
             case .detail(let port):
                 if let server = monitor.server(port: port) {
-                    ServerDetailView(server: server, monitor: monitor, back: { navigate(to: .servers) })
+                    ServerDetailView(server: server, monitor: monitor, commands: commands, back: { navigate(to: .servers) })
                         .transition(.move(edge: .trailing).combined(with: .opacity))
                 } else {
                     // The server went away while we were looking at it.

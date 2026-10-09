@@ -12,6 +12,7 @@ enum Main {
 struct WhatThePortApp: App {
     @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
     @StateObject private var monitor: ServerMonitor
+    @StateObject private var commands: CommandRunner
 
     init() {
         FontLoader.registerBundledFonts()
@@ -19,7 +20,10 @@ struct WhatThePortApp: App {
         // Initialize AppKit for snapshot mode without overriding its appearance.
         _ = NSApplication.shared
         let monitor = ServerMonitor()
+        let commands = CommandRunner()
         _monitor = StateObject(wrappedValue: monitor)
+        _commands = StateObject(wrappedValue: commands)
+        commands.start()
         if let index = CommandLine.arguments.firstIndex(of: "--snapshot-onboarding") {
             let directory = CommandLine.arguments.dropFirst(index + 1).first ?? FileManager.default.currentDirectoryPath
             SnapshotRenderer.runOnboarding(monitor: monitor, directory: directory)
@@ -38,7 +42,7 @@ struct WhatThePortApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            LocalizedView { PopoverRoot(monitor: monitor) }
+            LocalizedView { PopoverRoot(monitor: monitor, commands: commands) }
         } label: {
             LocalizedView { MenuBarLabel(monitor: monitor) }
         }

@@ -52,6 +52,7 @@ The prebuilt download is for **Apple Silicon Macs running macOS 14 or later**. T
 - **Leak detection** - Servers over 2 GB, or growing fast, turn amber in the list and the menu bar
 - **Clean up** - Find servers from deleted worktrees or that have gone idle, and stop them in bulk
 - **Stop and restart** - Stops the server’s own process tree; restart reruns the original command in the same folder
+- **Run a command** - Save a shell command and run it from the menu bar. It keeps running after you close the window. The server shows up in the list when it starts listening. Output goes to `~/Library/Logs/WhatThePort/`
 - **Alerts** - Notifications with Details, Stop and Snooze when a server passes your memory threshold or starts leaking
 - **Automatic clean up (optional)** - Off, Ask or Automatic; leaking servers are never stopped automatically
 - **Previews and pull requests (optional)** - A Vercel preview button and the branch's pull request, via the GitHub CLI you're already signed in to
@@ -67,6 +68,7 @@ WhatThePort lives in the menu bar as a small dot grid. Click it to see every ser
 - Hover a row to open it in the browser or stop it
 - Click a row for details: session, branch, folder, command, charts and processes
 - Click **Clean up** to tick the servers you want gone and stop them together
+- Click **Run** to save a command such as `cd ~/my-repo && pnpm run serve` and start it with no terminal window
 
 Right-click the dot grid to open a server in the browser, open Settings, check for updates, send feedback or quit.
 

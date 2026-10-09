@@ -90,7 +90,7 @@ enum ProcessControl {
         }
     }
 
-    private static func isSameProcess(_ pid: pid_t, startedAt: Date?) -> Bool {
+    static func isSameProcess(_ pid: pid_t, startedAt: Date?) -> Bool {
         guard pid > 1, pid != getpid(), let snapshot = ProcessInspector.snapshot(pid) else { return false }
         guard let startedAt else { return true }
         return abs(snapshot.startTime.timeIntervalSince(startedAt)) < 1

@@ -4,12 +4,14 @@ import SwiftUI
 struct ServerDetailView: View {
     let server: Server
     @ObservedObject var monitor: ServerMonitor
+    @ObservedObject var commands: CommandRunner
     @ObservedObject var github: GitHubLookup
     let back: () -> Void
 
-    init(server: Server, monitor: ServerMonitor, back: @escaping () -> Void) {
+    init(server: Server, monitor: ServerMonitor, commands: CommandRunner, back: @escaping () -> Void) {
         self.server = server
         self.monitor = monitor
+        self.commands = commands
         self.github = monitor.github
         self.back = back
     }
@@ -39,7 +41,7 @@ struct ServerDetailView: View {
 
     private func header(status: ServerStatus) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            PageHeader(title: server.project.name, back: back)
+            PageHeader(title: commands.command(for: server)?.name ?? server.project.name, back: back)
             HStack {
                 PortLabel(port: server.port, status: status, color: Theme.portColor(at: monitor.colorIndex(for: server.port)), large: true)
                 Spacer()
@@ -196,28 +198,33 @@ struct ServerDetailView: View {
 
             if processesExpanded {
                 let largest = max(server.processes.map(\.memory).max() ?? 1, 1)
-                VStack(spacing: 5) {
-                    ForEach(server.processes) { process in
-                        HStack(spacing: 0) {
-                            Text((process.depth > 0 ? String(repeating: "  ", count: process.depth - 1) + "└ " : "") + process.name)
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(server.processes.enumerated()), id: \.element.id) { index, process in
+                        if index > 0 {
+                            Rectangle().fill(Theme.separator).frame(height: 0.5).padding(.vertical, 8)
+                        }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(process.name)
                                 .font(Theme.mono)
                                 .foregroundStyle(process.pid == server.pid ? Theme.text1 : Theme.text1.opacity(0.8))
-                                .lineLimit(1)
-                                .truncationMode(.tail)
-                                .help(process.name)
-                            Spacer(minLength: 8)
-                            Text(String(process.pid)).font(Theme.monoCaption).foregroundStyle(Theme.text3)
-                                .frame(width: 52, alignment: .leading)
-                            Capsule().fill(Theme.fill).frame(width: 64, height: 4)
-                                .overlay(alignment: .leading) {
-                                    Capsule().fill(Theme.text1.opacity(process.pid == server.pid ? 0.75 : 0.45))
-                                        .frame(width: max(64 * CGFloat(process.memory) / CGFloat(largest), 3), height: 4)
-                                }
-                            Text(Format.bytesString(process.memory))
-                                .font(Theme.mono)
-                                .foregroundStyle(Theme.text1.opacity(0.85))
-                                .frame(width: 70, alignment: .trailing)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .environment(\.layoutDirection, .leftToRight)
+                            HStack(spacing: 8) {
+                                Text(String(process.pid)).font(Theme.monoCaption).foregroundStyle(Theme.text3)
+                                Spacer(minLength: 8)
+                                Capsule().fill(Theme.fill).frame(width: 64, height: 4)
+                                    .overlay(alignment: .leading) {
+                                        Capsule().fill(Theme.text1.opacity(process.pid == server.pid ? 0.75 : 0.45))
+                                            .frame(width: max(64 * CGFloat(process.memory) / CGFloat(largest), 3), height: 4)
+                                    }
+                                Text(Format.bytesString(process.memory))
+                                    .font(Theme.mono)
+                                    .foregroundStyle(Theme.text1.opacity(0.85))
+                                    .frame(width: 70, alignment: .trailing)
+                            }
                         }
+                        .padding(.leading, CGFloat(process.depth) * 14)
                     }
                 }
             }

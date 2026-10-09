@@ -15,6 +15,7 @@ enum Usage {
         case openEditor = "open-editor"
         case stop
         case restart
+        case runCommand = "run-command"
         case cleanUp = "clean-up"
         case autoCleanUp = "auto-clean-up"
         case memoryAlert = "memory-alert"

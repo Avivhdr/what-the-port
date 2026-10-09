@@ -297,3 +297,15 @@
 "Changes apply immediately." = "השינויים חלים מיד.";
 "servers (few)" = "שרתים";
 "tools (few)" = "כלים";
+"Run" = "הפעלה";
+"Run a saved command" = "הפעלת פקודה שמורה";
+"New command" = "פקודה חדשה";
+"Name" = "שם";
+"Runs in zsh. It keeps running after you close this window." = "רץ ב־⁦zsh⁩. הוא ממשיך לרוץ אחרי שסוגרים את החלון.";
+"Output goes to the log. A step that asks for input stops there." = "הפלט נשמר ביומן. שלב שמבקש קלט נעצר שם.";
+"Add a command, then run it from here." = "הוסיפו פקודה, ואז הפעילו אותה מכאן.";
+"Could not start the command." = "לא ניתן להפעיל את הפקודה.";
+"Running" = "פועל";
+"Listening on port %d" = "מאזין בפורט %d";
+"Open log" = "פתיחת היומן";
+"Save and run" = "שמירה והפעלה";

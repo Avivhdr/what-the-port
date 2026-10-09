@@ -297,3 +297,15 @@
 "Changes apply immediately." = "変更はすぐに適用されます。";
 "servers (few)" = "サーバー";
 "tools (few)" = "ツール";
+"Run" = "実行";
+"Run a saved command" = "保存したコマンドを実行";
+"New command" = "新しいコマンド";
+"Name" = "名前";
+"Runs in zsh. It keeps running after you close this window." = "zsh で実行します。このウィンドウを閉じても動き続けます。";
+"Output goes to the log. A step that asks for input stops there." = "出力はログに入ります。入力を求める手順はそこで止まります。";
+"Add a command, then run it from here." = "コマンドを追加して、ここから実行します。";
+"Could not start the command." = "コマンドを開始できませんでした。";
+"Running" = "実行中";
+"Listening on port %d" = "ポート %d で待受中";
+"Open log" = "ログを開く";
+"Save and run" = "保存して実行";

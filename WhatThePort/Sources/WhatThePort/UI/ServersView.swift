@@ -2,8 +2,10 @@ import SwiftUI
 
 struct ServersView: View {
     @ObservedObject var monitor: ServerMonitor
+    @ObservedObject var commands: CommandRunner
     let openServer: (Server) -> Void
     let openSettings: () -> Void
+    let openCommands: () -> Void
 
     private let maxVisibleRows = 7
     /// The memory-bar segment under the pointer.
@@ -16,10 +18,12 @@ struct ServersView: View {
     @State private var isCleaning: Bool
     @State private var selection: Set<Int> = []
 
-    init(monitor: ServerMonitor, startCleaning: Bool = false, openServer: @escaping (Server) -> Void, openSettings: @escaping () -> Void) {
+    init(monitor: ServerMonitor, commands: CommandRunner, startCleaning: Bool = false, openServer: @escaping (Server) -> Void, openSettings: @escaping () -> Void, openCommands: @escaping () -> Void) {
         self.monitor = monitor
+        self.commands = commands
         self.openServer = openServer
         self.openSettings = openSettings
+        self.openCommands = openCommands
         _isCleaning = State(initialValue: startCleaning)
         _selection = State(initialValue: startCleaning ? Self.suggestedSelection(monitor) : [])
     }
@@ -65,7 +69,10 @@ struct ServersView: View {
                 summaryDetail
             }
             MemoryShareBar(servers: visibleServers, monitor: monitor, focus: $focus, highlightedPort: hoveredRow,
-                           selection: isCleaning ? selection : nil) { server in
+                           selection: isCleaning ? selection : nil,
+                           names: Dictionary(uniqueKeysWithValues: visibleServers.compactMap { server in
+                               commands.command(for: server).map { (server.port, $0.name) }
+                           })) { server in
                 if isCleaning { toggle(server.port) } else { openServer(server) }
             }
             .frame(height: 16)
@@ -78,7 +85,7 @@ struct ServersView: View {
     @ViewBuilder private var summaryTitle: some View {
         switch focus {
         case .server(let port):
-            PageHeader(title: monitor.server(port: port).map { "\($0.project.name) :\(String($0.port))" } ?? L10n.text("Servers"))
+            PageHeader(title: monitor.server(port: port).map { "\(displayName(for: $0)) :\(String($0.port))" } ?? L10n.text("Servers"))
         case .app(let id):
             let app = monitor.otherApps.first { $0.id == id }
             HStack(spacing: 6) {
@@ -140,6 +147,11 @@ struct ServersView: View {
         }
     }
 
+    /// The name the user gave this command, or the project name.
+    private func displayName(for server: Server) -> String {
+        commands.command(for: server)?.name ?? server.project.name
+    }
+
     private func share(_ bytes: UInt64, of total: UInt64) -> String {
         Format.percent(Double(bytes) / Double(max(total, 1)) * 100)
     }
@@ -147,7 +159,7 @@ struct ServersView: View {
     private var rows: some View {
         VStack(spacing: 0) {
             ForEach(visibleServers) { server in
-                ServerRow(server: server, monitor: monitor,
+                ServerRow(server: server, monitor: monitor, commandName: commands.command(for: server)?.name,
                           isFocused: focusedPort == server.port,
                           isDimmed: focus != nil && focusedPort != server.port,
                           cleaning: isCleaning ? CleaningState(isSelected: selection.contains(server.port),
@@ -214,6 +226,16 @@ struct ServersView: View {
                 }
                 .buttonStyle(PillButtonStyle())
                 .disabled(monitor.servers.isEmpty)
+
+                Button(action: openCommands) {
+                    HStack(spacing: 7) {
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 9, weight: .medium))
+                        Text(L10n.text("Run"))
+                    }
+                }
+                .buttonStyle(PillButtonStyle())
+                .help(L10n.text("Run a saved command"))
 
                 Spacer()
 
@@ -290,6 +312,7 @@ struct CleaningState {
 struct ServerRow: View {
     let server: Server
     @ObservedObject var monitor: ServerMonitor
+    var commandName: String?
     var isFocused = false
     var isDimmed = false
     /// Non-nil while the page is in Clean up mode.
@@ -398,7 +421,7 @@ struct ServerRow: View {
     }
 
     private var primaryName: String {
-        server.project.branch ?? server.project.name
+        commandName ?? server.project.branch ?? server.project.name
     }
 
     /// Uptime or idle time, prefixed with the location when there's no branch.
@@ -478,6 +501,7 @@ struct MemoryShareBar: View {
     var highlightedPort: Int?
     /// In Clean up mode, selected servers stay bright and the rest dim.
     var selection: Set<Int>?
+    var names: [Int: String] = [:]
     let activate: (Server) -> Void
 
     private let spacing: CGFloat = 2
@@ -533,7 +557,7 @@ struct MemoryShareBar: View {
                 if selection == nil { focus = nil }
                 activate(server)
             }
-            .help("\(server.project.name) :\(String(server.port)) · \(Format.bytesString(server.memory))")
+            .help("\(names[server.port] ?? server.project.name) :\(String(server.port)) · \(Format.bytesString(server.memory))")
     }
 
     /// Other apps sit on the thin baseline; hovering one lifts and brightens it.

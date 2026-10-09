@@ -297,3 +297,15 @@
 "Changes apply immediately." = "更改立即生效。";
 "servers (few)" = "服务器";
 "tools (few)" = "工具";
+"Run" = "运行";
+"Run a saved command" = "运行已保存的命令";
+"New command" = "新命令";
+"Name" = "名称";
+"Runs in zsh. It keeps running after you close this window." = "在 zsh 中运行。关闭此窗口后它会继续运行。";
+"Output goes to the log. A step that asks for input stops there." = "输出写入日志。需要输入的步骤会停在那里。";
+"Add a command, then run it from here." = "添加命令，然后从这里运行。";
+"Could not start the command." = "无法启动该命令。";
+"Running" = "运行中";
+"Listening on port %d" = "正在监听端口 %d";
+"Open log" = "打开日志";
+"Save and run" = "保存并运行";

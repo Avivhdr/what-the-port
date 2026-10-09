@@ -297,3 +297,15 @@
 "Changes apply immediately." = "Los cambios se aplican de inmediato.";
 "servers (few)" = "servidores";
 "tools (few)" = "herramientas";
+"Run" = "Ejecutar";
+"Run a saved command" = "Ejecutar un comando guardado";
+"New command" = "Comando nuevo";
+"Name" = "Nombre";
+"Runs in zsh. It keeps running after you close this window." = "Se ejecuta en zsh. Sigue en marcha después de cerrar esta ventana.";
+"Output goes to the log. A step that asks for input stops there." = "La salida va al registro. Un paso que pide datos se detiene ahí.";
+"Add a command, then run it from here." = "Añade un comando y ejecútalo desde aquí.";
+"Could not start the command." = "No se pudo iniciar el comando.";
+"Running" = "En ejecución";
+"Listening on port %d" = "Escuchando en el puerto %d";
+"Open log" = "Abrir registro";
+"Save and run" = "Guardar y ejecutar";

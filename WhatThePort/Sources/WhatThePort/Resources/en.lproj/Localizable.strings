@@ -297,3 +297,15 @@
 "Changes apply immediately." = "Changes apply immediately.";
 "servers (few)" = "servers (few)";
 "tools (few)" = "tools (few)";
+"Run" = "Run";
+"Run a saved command" = "Run a saved command";
+"New command" = "New command";
+"Name" = "Name";
+"Runs in zsh. It keeps running after you close this window." = "Runs in zsh. It keeps running after you close this window.";
+"Output goes to the log. A step that asks for input stops there." = "Output goes to the log. A step that asks for input stops there.";
+"Add a command, then run it from here." = "Add a command, then run it from here.";
+"Could not start the command." = "Could not start the command.";
+"Running" = "Running";
+"Listening on port %d" = "Listening on port %d";
+"Open log" = "Open log";
+"Save and run" = "Save and run";

@@ -297,3 +297,15 @@
 "Changes apply immediately." = "Зміни застосовуються одразу.";
 "servers (few)" = "сервери";
 "tools (few)" = "інструменти";
+"Run" = "Запуск";
+"Run a saved command" = "Запустити збережену команду";
+"New command" = "Нова команда";
+"Name" = "Назва";
+"Runs in zsh. It keeps running after you close this window." = "Працює в zsh. Продовжує роботу після закриття цього вікна.";
+"Output goes to the log. A step that asks for input stops there." = "Вивід іде в журнал. Крок, який питає дані, зупиняється там.";
+"Add a command, then run it from here." = "Додайте команду і запустіть її звідси.";
+"Could not start the command." = "Не вдалося запустити команду.";
+"Running" = "Працює";
+"Listening on port %d" = "Слухає порт %d";
+"Open log" = "Відкрити журнал";
+"Save and run" = "Зберегти і запустити";

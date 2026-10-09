@@ -17,6 +17,7 @@
 - **Resource charts.** Ten minutes of memory and CPU history per server, summed across its own process tree.
 - **Clean up.** Preselects servers from deleted git worktrees or idle for hours, then stops each server’s own process tree in bulk. Postgres, Redis, MongoDB and MySQL are protected by default. Cleanup can be Off, Ask or Automatic; leaking servers are never stopped automatically.
 - **Stop and restart.** Stop sends SIGTERM to the server’s own process tree, then SIGKILL after a short delay. Restart reruns the original command in the same folder.
+- **Run a command.** Save a shell command, such as `cd ~/my-repo && git pull && pnpm i && pnpm run serve`, and run it from the menu bar. It runs in your login zsh, with no terminal window, and keeps running after you close the popover or quit the app. Output goes to `~/Library/Logs/WhatThePort/`. When the command starts listening, the server shows up in the list. A step that asks for input stops there.
 - **Previews and pull requests (optional).** A Vercel preview button and the branch’s pull request, through the GitHub CLI you’re already signed in to.
 - **Terminal UI.** `wtp` shows the same servers, details and Clean up in your terminal. `wtp list --json` prints them as JSON for scripts and coding agents.
 - **Global shortcut.** ⌥⌘P opens the popover.
@@ -48,7 +49,7 @@ wtp --version     Print the version
 
 WhatThePort reads listening TCP sockets with `lsof`, then inspects each server’s process tree through `libproc` and `sysctl`: memory footprint, CPU time, working directory, arguments and environment. From the working directory it finds the project manifest (package.json, pyproject.toml, Cargo.toml, go.mod, Gemfile), framework and git branch. Session links come from environment variables that Claude Code, Grok, Conductor and Pane pass to the commands they run, and from Codex and Grok session files. It rescans every 2 seconds. In monorepos, sibling servers stay separate from their shared task runner. When one process serves several ports, each row shows its server’s usage; totals count each process once, and the memory bar divides shared usage between those ports. Stopping or restarting that process affects all ports it serves.
 
-By default it watches ports 3000–65535 and processes that look like dev servers: node, bun, deno, python, uvicorn, gunicorn, ruby, rails, puma, php, java, go, cargo, dotnet, elixir, nginx, postgres, redis, mongod, mysql and more. Both are configurable in Settings → Ports & processes. Standard Homebrew and python.org framework interpreters are supported, including their Python.app wrapper; backends embedded in desktop apps remain excluded.
+By default it watches ports 3000–65535 and processes that look like dev servers: node, bun, deno, python, uvicorn, gunicorn, ruby, rails, puma, php, java, go, cargo, dotnet, elixir, nginx, postgres, redis, mongod, mysql and more. Both are configurable in Settings → Ports & processes. Standard Homebrew, python.org, and Xcode `python3` interpreters are supported, including their Python.app wrapper; backends embedded in other desktop apps remain excluded.
 
 Frameworks it recognizes include Next.js, Nuxt, Remix, Astro, SvelteKit, Vite, Expo, Angular, Create React App, Hono, Express, Storybook, Django, FastAPI, Flask, Rails, Rust and Go.
 

@@ -211,11 +211,15 @@ struct ScanEngineTests {
         f.process(30, name: "Python")
         f.listen(30, port: 8766)
         f.arguments[20] = ProcArgs(executablePath: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python", arguments: ["python3", "-m", "http.server"], environment: [:])
+        f.process(40, name: "Python")
+        f.listen(40, port: 8767)
         f.arguments[30] = ProcArgs(executablePath: "/Applications/Editor.app/Contents/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python", arguments: ["python3", "backend.py"], environment: [:])
-        #expect(f.scan().map(\.port) == [8765])
+        f.arguments[40] = ProcArgs(executablePath: "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python", arguments: ["python3", "-m", "http.server", "8767"], environment: [:])
+        #expect(f.scan().map(\.port) == [8765, 8767])
         #expect(ScanEngine.isEmbeddedAppExecutable("/Applications/Editor.app/Contents/MacOS/node"))
         #expect(ScanEngine.isEmbeddedAppExecutable("/Applications/Python.app/Contents/MacOS/Python"))
         #expect(!ScanEngine.isEmbeddedAppExecutable("/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python"))
+        #expect(!ScanEngine.isEmbeddedAppExecutable("/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python"))
         #expect(!ScanEngine.isEmbeddedAppExecutable("/project/.venv/bin/python3.12"))
     }
 

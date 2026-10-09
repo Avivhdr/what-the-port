@@ -24,7 +24,36 @@ import {
 // A working copy of the WhatThePort popover. Scrolling picks the view for each
 // section; clicking around works like the real app until the next section.
 
-type View = { name: 'list' } | { name: 'detail'; port: string } | { name: 'cleanUp' }
+type View = { name: 'list' } | { name: 'detail'; port: string } | { name: 'cleanUp' } | { name: 'run' }
+
+const SAVED_COMMAND = {
+  name: 'my-repo',
+  script: 'cd ~/my-repo && git pull && pnpm i && pnpm run serve',
+}
+
+// Shown in the server list while the sample command is running. The Run page
+// starts it. The list is where it lives.
+const COMMAND_SERVER: Server = {
+  port: '8765',
+  name: 'test',
+  branch: 'test',
+  status: 'on',
+  memory: 18,
+  cpu: 0,
+  cpuNote: 'quiet',
+  uptime: 'up 1m',
+  context: { text: 'test' },
+  lines: (l) => ({ context: `/Users · ${l.format('up %@', l.duration(1))}`, running: l.duration(1) }),
+  chart: 'flat',
+  spark: 'M0 9 L44 9',
+  processes: [{ pid: 76551, command: 'python3 -m http.server 8765', memory: 18, cpu: 0 }],
+  info: [
+    ['Folder', '~'],
+    ['Command', 'python3 -m http.server 8765'],
+    ['PID', '76551'],
+    ['Started', 'Just now'],
+  ],
+}
 
 const SECTION_VIEWS: View[] = [
   { name: 'list' },
@@ -50,6 +79,7 @@ export function useDemo(section: number) {
   const [direction, setDirection] = useState(1)
   const [open, setOpen] = useState(opensPopover(section))
   const [selected, setSelected] = useState(() => suggested(SERVERS.map((s) => s.port)))
+  const [commandOn, setCommandOn] = useState(false)
   const previous = useRef(section)
 
   useEffect(() => {
@@ -59,6 +89,7 @@ export function useDemo(section: number) {
     setView(SECTION_VIEWS[section])
     setOpen(opensPopover(section))
     setSelected(suggested(running))
+    setCommandOn(false)
     // `running` intentionally omitted: stopping a server shouldn't reset the view.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [section])
@@ -73,6 +104,7 @@ export function useDemo(section: number) {
   )
 
   const stop = useCallback((selectedPorts: string[]) => {
+    if (selectedPorts.includes(COMMAND_SERVER.port)) setCommandOn(false)
     const ports = stoppedPorts(SERVERS, selectedPorts)
     setRunning((current) => current.filter((port) => !ports.includes(port)))
     setSelected((current) => current.filter((port) => !ports.includes(port)))
@@ -96,10 +128,11 @@ export function useDemo(section: number) {
   }, [])
 
   // A detail view for a server that's been stopped falls back to the list.
-  const shown: View = view.name === 'detail' && !running.includes(view.port) ? { name: 'list' } : view
+  const visiblePorts = commandOn ? [...running, COMMAND_SERVER.port] : running
+  const shown: View = view.name === 'detail' && !visiblePorts.includes(view.port) ? { name: 'list' } : view
 
   return {
-    running: SERVERS.filter((s) => running.includes(s.port)),
+    running: [...SERVERS.filter((s) => running.includes(s.port)), ...(commandOn ? [COMMAND_SERVER] : [])],
     view: shown,
     direction,
     open,
@@ -109,6 +142,8 @@ export function useDemo(section: number) {
     go,
     stop,
     restartAll,
+    commandOn,
+    toggleCommand: () => setCommandOn((on) => !on),
   }
 }
 
@@ -150,7 +185,11 @@ export function AppPopover({ demo, language = 'en' }: { demo: Demo; language?: A
         : 'empty'
 
   let content: ReactNode
-  if (view.name === 'detail') content = <DetailView demo={demo} server={SERVERS.find((s) => s.port === view.port)!} l={l} />
+  if (view.name === 'detail') {
+    const server = demo.running.find((s) => s.port === view.port)
+    content = server ? <DetailView demo={demo} server={server} l={l} /> : <ListView demo={demo} l={l} />
+  }
+  else if (view.name === 'run') content = <RunView demo={demo} l={l} />
   else content = <ListView demo={demo} l={l} />
 
   return (
@@ -468,21 +507,34 @@ function ListView({ demo, l }: { demo: Demo; l: Localizer }) {
         </div>
       ) : (
         <div className={`${styles.popSection} ${styles.popFooter}`}>
-          <button type="button" className={styles.chip} onClick={() => demo.go({ name: 'cleanUp' }, 1)}>
-            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
-              <path
-                d="M8.5 1.5 6 7M3 8.5h7l.8 4H2.2L3 8.5Z"
-                fill="none"
-                stroke="#F5F5F7"
-                strokeWidth="1.3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path d="M5 10.5v2M7.5 10.5v2" fill="none" stroke="#F5F5F7" strokeWidth="1.1" strokeLinecap="round" />
-            </svg>
-            <span className={styles.popTitle}>{l.text('Clean up')}</span>
-            {cleanUpCount > 0 && <span className={styles.chipCount}>{cleanUpCount}</span>}
-          </button>
+          <span className={styles.footerActions}>
+            <button type="button" className={styles.chip} onClick={() => demo.go({ name: 'cleanUp' }, 1)}>
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
+                <path
+                  d="M8.5 1.5 6 7M3 8.5h7l.8 4H2.2L3 8.5Z"
+                  fill="none"
+                  stroke="#F5F5F7"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path d="M5 10.5v2M7.5 10.5v2" fill="none" stroke="#F5F5F7" strokeWidth="1.1" strokeLinecap="round" />
+              </svg>
+              <span className={styles.popTitle}>{l.text('Clean up')}</span>
+              {cleanUpCount > 0 && <span className={styles.chipCount}>{cleanUpCount}</span>}
+            </button>
+            <button
+              type="button"
+              className={styles.chip}
+              title={l.text('Run a saved command')}
+              onClick={() => demo.go({ name: 'run' }, 1)}
+            >
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden>
+                <path d="M2.2 1.4v7.2L8.4 5 2.2 1.4Z" fill="#F5F5F7" />
+              </svg>
+              <span className={styles.popTitle}>{l.text('Run')}</span>
+            </button>
+          </span>
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
             <path
               d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
@@ -496,6 +548,38 @@ function ListView({ demo, l }: { demo: Demo; l: Localizer }) {
           </svg>
         </div>
       )}
+    </>
+  )
+}
+
+function RunView({ demo, l }: { demo: Demo; l: Localizer }) {
+  const [flash, trigger] = useFlash()
+  return (
+    <>
+      <div className={styles.popHead}>
+        <Header title={l.text('Run')} onBack={() => demo.go({ name: 'list' }, -1)} backLabel={l.text('Back')} />
+        <p className={`${styles.commandHelp} ${styles.t2}`}>{l.text('Runs in zsh. It keeps running after you close this window.')}</p>
+        <p className={`${styles.commandHelp} ${styles.t3}`}>{l.text('Output goes to the log. A step that asks for input stops there.')}</p>
+      </div>
+      <div className={`${styles.popSection} ${styles.rowList}`}>
+        <div className={styles.commandRow}>
+          <span className={styles.commandMain}>
+            <span className={styles.commandName}>{SAVED_COMMAND.name}</span>
+            <span className={`${styles.commandScript} ${styles.mono}`} dir="ltr">
+              {SAVED_COMMAND.script}
+            </span>
+            {demo.commandOn && <span className={`${styles.caption} ${styles.t2}`}>{l.text('Running')}</span>}
+          </span>
+          {demo.commandOn && (
+            <button type="button" className={styles.iconButton} onClick={() => trigger('log')}>
+              {flash === 'log' ? 'Opened the log' : l.text('Open log')}
+            </button>
+          )}
+          <button type="button" className={styles.iconButton} onClick={demo.toggleCommand}>
+            {demo.commandOn ? l.text('Stop') : l.text('Run')}
+          </button>
+        </div>
+      </div>
     </>
   )
 }
@@ -752,16 +836,16 @@ function DetailView({ demo, server, l }: { demo: Demo; server: Server; l: Locali
         <div className={styles.collapsible} data-open={processesOpen}>
           <div>
             <div className={styles.processList}>
-              {server.processes.map((p, index) => (
-                <div key={p.command} className={styles.processRow}>
-                  <span className={`${styles.mono} ${styles.ellipsis} ${styles.t1}`}>
-                    {index ? '└ ' : ''}
-                    {p.command}
+              {server.processes.map((p) => (
+                <div key={p.pid} className={styles.processRow}>
+                  <span className={`${styles.mono} ${styles.processCommand} ${styles.t1}`}>{p.command}</span>
+                  <span className={styles.processMeta}>
+                    <span className={`${styles.mono} ${styles.t3}`}>{p.pid}</span>
+                    <span className={styles.processBar}>
+                      <i style={{ width: `${(p.memory / Math.max(...server.processes.map((item) => item.memory))) * 100}%` }} />
+                    </span>
+                    <span className={`${styles.mono} ${styles.t2}`}>{formatMemory(p.memory)}</span>
                   </span>
-                  <span className={styles.processBar}>
-                    <i style={{ width: `${(p.memory / Math.max(...server.processes.map((p) => p.memory))) * 100}%` }} />
-                  </span>
-                  <span className={`${styles.mono} ${styles.t2}`}>{formatMemory(p.memory)}</span>
                 </div>
               ))}
             </div>
